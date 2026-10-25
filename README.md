@@ -1,35 +1,4 @@
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KOSmos – Installation</title>
-<link rel="icon" href="assets/icon-32.png">
-<style>
-:root{--bg:#f4f6f9;--card:#fff;--ink:#1d2228;--ink2:#5a636e;--line:#dfe3e8;--accent:#185abd;--ok:#1e7b45;--okbg:#e7f5ec;--warn:#8a5300;--warnbg:#fff4df}
-@media (prefers-color-scheme: dark){:root{--bg:#1c1e22;--card:#26292e;--ink:#eceef1;--ink2:#a7afb9;--line:#3a3e45;--accent:#6ea8fe;--ok:#7fd3a2;--okbg:#1f3329;--warn:#f0b75a;--warnbg:#3a2f1a}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
-.wrap{max-width:760px;margin:0 auto;padding:32px 16px 60px}
-header{display:flex;gap:14px;align-items:center;margin-bottom:22px}
-header img{width:52px;height:52px;border-radius:12px}
-h1{font-size:26px;margin:0;letter-spacing:-.3px}
-header p{margin:2px 0 0;color:var(--ink2)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-top:14px}
-h2{font-size:17px;margin:0 0 8px;display:flex;gap:10px;align-items:center}
-.n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;font-weight:700}
-ol{margin:6px 0 0;padding-left:22px}
-li{margin:4px 0}
-code,kbd{font-family:ui-monospace,Menlo,monospace;font-size:13px;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
-.btn{display:inline-block;background:var(--accent);color:#fff;text-decoration:none;border:none;border-radius:8px;padding:10px 16px;font-weight:600;cursor:pointer;font-size:15px}
-.btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
-.note{border-radius:8px;padding:10px 12px;margin-top:10px;font-size:14px}
-.ok{background:var(--okbg);color:var(--ok)}
-.warn{background:var(--warnbg);color:var(--warn)}
-.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.muted{color:var(--ink2);font-size:14px}
-</style>
-</head>
+
 <body>
 <div class="wrap">
   <header>
