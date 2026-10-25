@@ -35,11 +35,6 @@
     <p class="muted">Auf Schulrechnern ist diese Einstellung oft gesperrt. Dann kann die Schul-IT KOSmos mit derselben manifest.xml zentral im Microsoft-365-Admin-Center verteilen.</p>
   </div>
 
-  <div class="card">
-    <h2>Ohne Word ausprobieren</h2>
-    <p class="muted">Dieselbe Oberfläche im Browser – dort kann man das KOS als PNG (600 dpi) oder SVG speichern und in jedes Dokument ziehen.</p>
-    <div class="row"><a class="btn sec" href="preview.html">Im Browser öffnen</a></div>
-  </div>
 </div>
 
 
