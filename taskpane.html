@@ -1,0 +1,1707 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KOSmos</title>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#1d2228; --ink2:#5a636e; --line:#dfe3e8; --line2:#c9cfd6;
+  --accent:#185abd; --accent-ink:#ffffff; --accent-soft:#e8f0fb; --warn:#9a5b00; --warn-bg:#fff6e5; --err:#b3261e; --err-bg:#fdeceb;
+  --radius:8px; --field:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1f2125; --panel:#2a2d32; --ink:#eceef1; --ink2:#a7afb9; --line:#3a3e45; --line2:#4a4f57;
+    --accent:#6ea8fe; --accent-ink:#0d1b2e; --accent-soft:#24344d; --warn:#f0b75a; --warn-bg:#3a2f1a; --err:#ff8a80; --err-bg:#3d2423; --field:#1f2125;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:64px}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{display:flex;align-items:center;gap:8px;padding:10px 12px 8px}
+.brand{display:flex;align-items:center;gap:7px;font-weight:650;font-size:14px;letter-spacing:.2px;flex:1;min-width:0}
+.brand svg{flex:none}
+.brand small{font-weight:400;color:var(--ink2);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top select{max-width:52%}
+
+.preview{margin:0 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px}
+.paper{background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;min-height:120px;max-height:300px;overflow:hidden}
+.paper svg{display:block;max-width:100%;max-height:300px;height:auto;width:auto}
+.paper .ph{color:#8a929c;padding:30px 10px;text-align:center}
+.meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-top:6px;font-size:12px;color:var(--ink2)}
+.meta b{color:var(--ink);font-weight:600}
+#msgs{margin:6px 0 0;padding:0;list-style:none}
+#msgs li{font-size:12px;padding:5px 8px;border-radius:6px;margin-top:4px;background:var(--warn-bg);color:var(--warn)}
+#msgs li.err{background:var(--err-bg);color:var(--err)}
+
+main{padding:4px 12px 8px}
+details{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);margin-top:8px}
+summary{list-style:none;cursor:pointer;padding:9px 12px;font-weight:600;display:flex;align-items:center;gap:8px;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"";width:6px;height:6px;border-right:1.6px solid var(--ink2);border-bottom:1.6px solid var(--ink2);transform:rotate(-45deg);transition:transform .15s;margin-right:2px}
+details[open]>summary::before{transform:rotate(45deg)}
+summary .badge{margin-left:auto;font-weight:500;font-size:11px;color:var(--ink2)}
+.body{padding:2px 12px 12px}
+
+label{display:block}
+.lbl{display:block;font-size:11.5px;color:var(--ink2);margin:8px 0 3px}
+input[type=text],input[type=number],select,textarea{width:100%;background:var(--field);border:1px solid var(--line2);border-radius:6px;padding:5px 7px;min-height:28px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+textarea{resize:vertical;min-height:70px;font-family:ui-monospace,Menlo,monospace;font-size:12px}
+input[type=color]{width:34px;height:28px;padding:0 2px;border:1px solid var(--line2);border-radius:6px;background:var(--field)}
+.chk{display:flex;align-items:center;gap:7px;margin-top:8px;cursor:pointer}
+.chk input{margin:0;width:15px;height:15px;accent-color:var(--accent)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 8px}
+
+table.xy{width:100%;border-collapse:collapse;margin-top:4px}
+table.xy th{font-size:11.5px;color:var(--ink2);font-weight:500;text-align:left;padding:4px 6px 4px 0;white-space:nowrap}
+table.xy thead th{text-align:center;font-weight:650;color:var(--ink);font-style:italic;font-family:Georgia,serif;font-size:14px}
+table.xy td{padding:3px 0 3px 6px}
+table.xy td input,table.xy td select{min-width:0}
+
+.seg{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.seg button{flex:1 1 auto;border:1px solid var(--line2);background:var(--field);border-radius:6px;padding:5px 8px;cursor:pointer;font-size:12px;white-space:nowrap}
+.seg button[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:600}
+
+.fcard{border:1px solid var(--line);border-radius:7px;padding:8px;margin-top:8px;background:var(--bg)}
+.fhead{display:flex;align-items:center;gap:6px}
+.fhead .fn{font-family:Georgia,serif;font-style:italic;font-weight:600;white-space:nowrap}
+.fhead input{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.fhead input.bad{border-color:var(--err);background:var(--err-bg)}
+.icon-btn{flex:none;border:none;background:transparent;width:26px;height:26px;border-radius:6px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;justify-content:center}
+.icon-btn:hover{background:var(--line)}
+.frow{display:grid;grid-template-columns:1.3fr .8fr auto;gap:6px;margin-top:6px;align-items:end}
+.frow2{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:6px;margin-top:2px}
+.ferr{font-size:11.5px;color:var(--err);margin-top:4px}
+.small{font-size:11.5px;color:var(--ink2)}
+.btn{border:1px solid var(--line2);background:var(--field);border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--ink2)}
+.btn.wide{width:100%;margin-top:10px}
+.btn.primary,.actions .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn:disabled,.actions button:disabled{opacity:.5;cursor:default}
+code{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 3px}
+.help p{margin:6px 0}
+.help table{border-collapse:collapse;width:100%;font-size:12px}
+.help td{padding:3px 4px;border-top:1px solid var(--line);vertical-align:top}
+.help td:first-child{white-space:nowrap}
+
+.tplrow{display:flex;gap:6px;margin-top:6px;align-items:center}
+.tplrow span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.actions{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:9px 12px;display:flex;gap:6px;z-index:5}
+.actions button{border:1px solid var(--line2);background:var(--field);border-radius:7px;padding:8px 10px;cursor:pointer;font-weight:500;white-space:nowrap}
+.actions .primary{flex:1}
+#toast{position:fixed;left:12px;right:12px;bottom:62px;background:#1d2228;color:#fff;border-radius:8px;padding:9px 12px;font-size:12.5px;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;z-index:6}
+#toast.show{opacity:1;transform:none}
+#toast.err{background:#8c1d18}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="1" width="22" height="22" rx="5" fill="var(--accent)"/><path d="M5 18.5H19.5M7 20V4.5" stroke="#fff" stroke-width="1.6" fill="none"/><path d="M7 16C10 15 11 9 13.5 8.5S17 11 19 6" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>
+    <span>KOSmos</span><small id="modeInfo"></small>
+  </div>
+  <select id="tpl" aria-label="Vorlage laden"></select>
+</header>
+
+<section class="preview">
+  <div id="pv" class="paper"><div class="ph">Vorschau wird erstellt …</div></div>
+  <div class="meta"><span>Größe: <b id="size">–</b></span><span id="gridInfo"></span></div>
+  <ul id="msgs"></ul>
+</section>
+
+<main>
+  <details open id="secRange">
+    <summary>Bereich und Maßstab</summary>
+    <div class="body">
+      <table class="xy">
+        <thead><tr><th></th><th>x</th><th>y</th></tr></thead>
+        <tbody>
+          <tr><th>von</th><td><input type="text" data-k="x.min" inputmode="decimal"></td><td><input type="text" data-k="y.min" inputmode="decimal"></td></tr>
+          <tr><th>bis</th><td><input type="text" data-k="x.max" inputmode="decimal"></td><td><input type="text" data-k="y.max" inputmode="decimal"></td></tr>
+          <tr><th title="Wie viele Einheiten entsprechen 1 cm auf dem Papier?">1 cm ≙</th><td><input type="text" data-k="x.per" inputmode="decimal"></td><td><input type="text" data-k="y.per" inputmode="decimal"></td></tr>
+          <tr><th title="Abstand der Teilstriche in Einheiten">Teilstrich alle</th><td><input type="text" data-k="x.step" inputmode="decimal"></td><td><input type="text" data-k="y.step" inputmode="decimal"></td></tr>
+          <tr><th>Zahlen</th>
+            <td><select data-k="x.labels"><option value="all">alle</option><option value="2">jede 2.</option><option value="5">jede 5.</option><option value="1+5">1 und jede 5.</option><option value="1">nur 1</option><option value="none">keine</option></select></td>
+            <td><select data-k="y.labels"><option value="all">alle</option><option value="2">jede 2.</option><option value="5">jede 5.</option><option value="1+5">1 und jede 5.</option><option value="1">nur 1</option><option value="none">keine</option></select></td></tr>
+          <tr><th>Achsenname</th><td><input type="text" data-k="x.name" placeholder="z. B. t in s"></td><td><input type="text" data-k="y.name" placeholder="z. B. s in m"></td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin:8px 0 0">Zahlen mit Komma oder Terme wie <code>2pi</code> sind erlaubt.</p>
+    </div>
+  </details>
+
+  <details id="secFuncs">
+    <summary>Funktionen <span class="badge" id="fBadge"></span></summary>
+    <div class="body">
+      <div id="funcs"></div>
+      <button class="btn wide" id="addF" type="button">+ Funktion hinzufügen</button>
+      <div class="lbl" style="margin-top:12px">Scharparameter <code>z</code> (auch <code>a</code>, <code>k</code>)</div>
+      <div class="grid3">
+        <label><span class="lbl">von</span><input type="text" data-k="schar.from" inputmode="decimal"></label>
+        <label><span class="lbl">bis</span><input type="text" data-k="schar.to" inputmode="decimal"></label>
+        <label><span class="lbl">Schritt</span><input type="text" data-k="schar.step" inputmode="decimal"></label>
+      </div>
+      <label class="chk"><input type="checkbox" data-k="deg"> Winkel in Grad (sin, cos, tan)</label>
+    </div>
+  </details>
+
+  <details id="secGrid">
+    <summary>Raster</summary>
+    <div class="body">
+      <div class="seg" id="gridSeg" role="group" aria-label="Rasterart">
+        <button type="button" data-v="karo5">Karo 5 mm</button>
+        <button type="button" data-v="karo10">Karo 1 cm</button>
+        <button type="button" data-v="mm">mm-Papier</button>
+        <button type="button" data-v="dots">Punkte</button>
+        <button type="button" data-v="none">ohne</button>
+      </div>
+      <div class="grid3">
+        <label><span class="lbl">Farbe</span>
+          <select id="gridShade">
+            <option value="#c4c4c4">hellgrau</option><option value="#9a9a9a">grau</option><option value="#6b6b6b">dunkelgrau</option><option value="#000000">schwarz</option><option value="custom">eigene …</option>
+          </select></label>
+        <label><span class="lbl">Linie (pt)</span><input type="number" data-k="grid.width" step="0.05" min="0.05" max="2"></label>
+        <label><span class="lbl">Rand (mm)</span><input type="number" data-k="grid.margin" step="5" min="0" max="30"></label>
+      </div>
+      <div id="gridColorWrap" class="hidden" style="margin-top:6px"><input type="color" data-k="grid.color"> <span class="small">eigene Rasterfarbe</span></div>
+    </div>
+  </details>
+
+  <details id="secAxes">
+    <summary>Achsen und Schrift</summary>
+    <div class="body">
+      <label class="chk"><input type="checkbox" data-k="axes.show"> Achsen zeichnen</label>
+      <div class="grid3">
+        <label><span class="lbl">Pfeilspitze</span><select data-k="axes.arrow"><option value="s">klein</option><option value="m">mittel</option><option value="l">groß</option><option value="none">keine</option></select></label>
+        <label><span class="lbl">Achse (pt)</span><input type="number" data-k="axes.width" step="0.25" min="0.25" max="4"></label>
+        <label><span class="lbl">Strich (mm)</span><input type="number" data-k="axes.tick" step="0.5" min="0" max="6"></label>
+      </div>
+      <div class="grid2">
+        <label><span class="lbl">Ursprung</span><select data-k="axes.origin"><option value="O">O (Buchstabe)</option><option value="0">0 (Null)</option><option value="none">ohne</option></select></label>
+        <label><span class="lbl">Achsennamen</span><select data-k="axes.italic"><option value="true">kursiv</option><option value="false">gerade</option></select></label>
+      </div>
+      <div class="grid2">
+        <label><span class="lbl">Schrift</span>
+          <select data-k="font.family">
+            <option>Arial</option><option>Helvetica</option><option>Calibri</option><option>Times New Roman</option><option>Cambria</option><option>Verdana</option><option>Comic Sans MS</option>
+          </select></label>
+        <label><span class="lbl">Größe (pt)</span><input type="number" data-k="font.size" step="1" min="5" max="24"></label>
+      </div>
+      <label class="chk"><input type="checkbox" data-k="font.comma"> Dezimalkomma (1,5 statt 1.5)</label>
+      <label class="chk"><input type="checkbox" data-k="font.halo"> Zahlen weiß hinterlegen</label>
+      <label class="chk"><input type="checkbox" data-k="background"> Weißer Hintergrund</label>
+    </div>
+  </details>
+
+  <details id="secPoints">
+    <summary>Messpunkte <span class="badge" id="pBadge"></span></summary>
+    <div class="body">
+      <span class="lbl">Ein Punkt pro Zeile: <code>x | y</code>, optional mit Namen</span>
+      <textarea data-k="points.text" rows="4" placeholder="A (1 | 2)&#10;2,5 | 3,1&#10;4;5"></textarea>
+      <p class="small" style="margin:4px 0 0">Spalten aus Excel lassen sich direkt einfügen.</p>
+      <div class="grid3">
+        <label><span class="lbl">Zeichen</span><select data-k="points.marker"><option value="x">× Kreuz</option><option value="+">+ Plus</option><option value="dot">● Punkt</option><option value="o">○ Kreis</option></select></label>
+        <label><span class="lbl">Größe (mm)</span><input type="number" data-k="points.size" step="0.2" min="0.8" max="6"></label>
+        <label><span class="lbl">Linie (pt)</span><input type="number" data-k="points.width" step="0.25" min="0.25" max="3"></label>
+      </div>
+      <label class="chk"><input type="checkbox" data-k="points.connect"> Punkte verbinden</label>
+      <label class="chk"><input type="checkbox" data-k="points.names"> Punktnamen anzeigen</label>
+    </div>
+  </details>
+
+  <details id="secTable">
+    <summary>Wertetabelle</summary>
+    <div class="body">
+      <div class="grid3">
+        <label><span class="lbl">x von</span><input type="text" data-k="table.from" inputmode="decimal"></label>
+        <label><span class="lbl">bis</span><input type="text" data-k="table.to" inputmode="decimal"></label>
+        <label><span class="lbl">Schritt</span><input type="text" data-k="table.step" inputmode="decimal"></label>
+      </div>
+      <div class="lbl">Zeilen</div>
+      <div id="tblFuncs"></div>
+      <label><span class="lbl">Zusätzliche leere Zeilen (mit ; trennen)</span><input type="text" data-k="table.extra" placeholder="z. B. s in m; v in m/s"></label>
+      <div class="grid3">
+        <label><span class="lbl">Kopf x-Zeile</span><input type="text" data-k="table.xName" placeholder="wie Achse"></label>
+        <label><span class="lbl">Nachkomma</span><input type="number" data-k="table.decimals" min="0" max="6" step="1"></label>
+        <label><span class="lbl">Spalten max.</span><input type="number" data-k="table.maxCols" min="3" max="30" step="1"></label>
+      </div>
+      <label class="chk"><input type="checkbox" data-k="table.empty"> y-Werte leer lassen (zum Ausfüllen)</label>
+      <label class="chk"><input type="checkbox" data-k="table.vertical"> Senkrecht (x-Werte untereinander)</label>
+      <button class="btn wide primary" id="btnTable" type="button">Wertetabelle einfügen</button>
+      <p class="small" id="tblPreview" style="margin:6px 0 0"></p>
+    </div>
+  </details>
+
+  <details id="secTpl">
+    <summary>Eigene Vorlagen</summary>
+    <div class="body">
+      <div class="tplrow"><input type="text" id="tplName" placeholder="Name, z. B. Stegreif 8a"><button class="btn" id="tplSave" type="button">Speichern</button></div>
+      <div id="tplList"></div>
+      <button class="btn wide" id="btnReset" type="button">Alles auf Standard zurücksetzen</button>
+    </div>
+  </details>
+
+  <details id="secHelp" class="help">
+    <summary>Hilfe zur Eingabe</summary>
+    <div class="body">
+      <p>Malpunkte darf man weglassen: <code>2x</code>, <code>3(x+1)</code>, <code>x sin(x)</code>. Kommazahlen mit Komma oder Punkt. Mehrere Argumente mit <code>;</code> trennen.</p>
+      <table>
+        <tr><td><code>x^2</code>, <code>x²</code></td><td>Potenz</td></tr>
+        <tr><td><code>sqrt(x)</code>, <code>wurzel(3;x)</code></td><td>Quadrat- / n-te Wurzel</td></tr>
+        <tr><td><code>sin cos tan</code></td><td>Bogenmaß (oder Grad, siehe Funktionen)</td></tr>
+        <tr><td><code>exp(x)</code>, <code>e^x</code></td><td>e-Funktion</td></tr>
+        <tr><td><code>ln lg log(b;x)</code></td><td>Logarithmen</td></tr>
+        <tr><td><code>|x|</code>, <code>abs(x)</code></td><td>Betrag</td></tr>
+        <tr><td><code>int(x)</code>, <code>sgn(x)</code></td><td>Ganzzahl, Vorzeichen</td></tr>
+        <tr><td><code>pi</code>, <code>e</code></td><td>Konstanten</td></tr>
+        <tr><td><code>z</code></td><td>Scharparameter (von–bis–Schritt)</td></tr>
+        <tr><td><code>x^2*ber(0;3)</code></td><td>nur zwischen 0 und 3 zeichnen (wie FunkFix)</td></tr>
+        <tr><td><code>t</code></td><td>darf statt <code>x</code> stehen, z. B. <code>s(t)=0,5*2t^2</code></td></tr>
+      </table>
+      <p>Ein eingefügtes KOS kann man später anklicken und mit <b>Laden</b> die Einstellungen zurückholen, ändern und mit <b>Ersetzen</b> austauschen.</p>
+    </div>
+  </details>
+</main>
+
+<footer class="actions" id="actWord">
+  <button class="primary" id="btnInsert" type="button">In Word einfügen</button>
+  <button id="btnReplace" type="button" title="Markiertes KOS durch die aktuelle Fassung ersetzen">Ersetzen</button>
+  <button id="btnLoad" type="button" title="Einstellungen aus dem markierten KOS laden">Laden</button>
+</footer>
+<footer class="actions hidden" id="actBrowser">
+  <button class="primary" id="btnPng" type="button">PNG (600 dpi) laden</button>
+  <button id="btnSvg" type="button">SVG laden</button>
+</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* KOSmos – Kern: Termparser und SVG-Zeichner für Koordinatensysteme
+   Alle Maße intern in Millimetern (Papier). Keine DOM-Abhängigkeit. */
+var KOS = (function () {
+  'use strict';
+
+  /* ======================= Zahlen ======================= */
+
+  function fmtNum(v, comma) {
+    if (comma === undefined) comma = true;
+    if (!isFinite(v)) return '?';
+    if (Math.abs(v) < 1e-12) v = 0;
+    var s = String(Number(v.toPrecision(10)));
+    if (s.indexOf('e') >= 0) s = Number(v.toPrecision(4)).toExponential().replace('e+', '·10^').replace('e', '·10^');
+    if (comma) s = s.replace('.', ',');
+    if (s.charAt(0) === '-') s = '−' + s.slice(1);
+    return s;
+  }
+
+  /* Zahl aus Eingabefeld; erlaubt Komma und Terme wie "2pi" oder "1/3" */
+  function num(str, fallback) {
+    if (typeof str === 'number') return str;
+    var s = String(str == null ? '' : str).trim();
+    if (s === '') return fallback === undefined ? NaN : fallback;
+    try {
+      var f = compile(s);
+      if (f.usesX) return NaN;
+      var v = f(0, 1);
+      return isFinite(v) ? v : NaN;
+    } catch (e) {
+      return NaN;
+    }
+  }
+
+  /* ======================= Termparser ======================= */
+
+  function TermError(msg) { this.message = msg; this.name = 'TermError'; }
+  TermError.prototype = Object.create(Error.prototype);
+
+  var D2R = Math.PI / 180;
+
+  function fact(n) {
+    if (n < 0 || Math.floor(n) !== n || n > 170) return NaN;
+    var r = 1; for (var i = 2; i <= n; i++) r *= i; return r;
+  }
+
+  /* Funktionen: [minArgs, maxArgs, impl(args, x, deg)] */
+  var FUNCS = {
+    sqrt: [1, 2, function (a) { return a.length === 2 ? nthRoot(a[1], a[0]) : Math.sqrt(a[0]); }],
+    sin: [1, 1, function (a, x, d) { return Math.sin(d ? a[0] * D2R : a[0]); }],
+    cos: [1, 1, function (a, x, d) { return Math.cos(d ? a[0] * D2R : a[0]); }],
+    tan: [1, 1, function (a, x, d) { var t = d ? a[0] * D2R : a[0]; return Math.abs(Math.cos(t)) < 1e-12 ? NaN : Math.tan(t); }],
+    cot: [1, 1, function (a, x, d) { var t = d ? a[0] * D2R : a[0]; var s = Math.sin(t); return Math.abs(s) < 1e-12 ? NaN : Math.cos(t) / s; }],
+    arcsin: [1, 1, function (a, x, d) { var r = Math.asin(a[0]); return d ? r / D2R : r; }],
+    arccos: [1, 1, function (a, x, d) { var r = Math.acos(a[0]); return d ? r / D2R : r; }],
+    arctan: [1, 1, function (a, x, d) { var r = Math.atan(a[0]); return d ? r / D2R : r; }],
+    sinh: [1, 1, function (a) { return Math.sinh(a[0]); }],
+    cosh: [1, 1, function (a) { return Math.cosh(a[0]); }],
+    tanh: [1, 1, function (a) { return Math.tanh(a[0]); }],
+    exp: [1, 1, function (a) { return Math.exp(a[0]); }],
+    ln: [1, 1, function (a) { return a[0] > 0 ? Math.log(a[0]) : NaN; }],
+    lg: [1, 1, function (a) { return a[0] > 0 ? Math.log10(a[0]) : NaN; }],
+    log: [1, 2, function (a) {
+      if (a.length === 1) return a[0] > 0 ? Math.log10(a[0]) : NaN;
+      return (a[0] > 0 && a[0] !== 1 && a[1] > 0) ? Math.log(a[1]) / Math.log(a[0]) : NaN;
+    }],
+    abs: [1, 1, function (a) { return Math.abs(a[0]); }],
+    int: [1, 1, function (a) { return Math.floor(a[0]); }],
+    floor: [1, 1, function (a) { return Math.floor(a[0]); }],
+    ceil: [1, 1, function (a) { return Math.ceil(a[0]); }],
+    round: [1, 1, function (a) { return Math.round(a[0]); }],
+    sgn: [1, 1, function (a) { return a[0] > 0 ? 1 : a[0] < 0 ? -1 : 0; }],
+    min: [2, 9, function (a) { return Math.min.apply(null, a); }],
+    max: [2, 9, function (a) { return Math.max.apply(null, a); }],
+    /* ber(a;b): 1 im Bereich a ≤ x ≤ b, sonst undefiniert (Lücke im Graphen) */
+    ber: [2, 2, function (a, x) { var lo = Math.min(a[0], a[1]), hi = Math.max(a[0], a[1]); return (x >= lo - 1e-9 && x <= hi + 1e-9) ? 1 : NaN; }]
+  };
+  var ALIASES = {
+    sqr: 'sqrt', wurzel: 'sqrt', root: 'sqrt', asin: 'arcsin', acos: 'arccos', atan: 'arctan',
+    asn: 'arcsin', acs: 'arccos', atn: 'arctan', betrag: 'abs', sign: 'sgn', signum: 'sgn',
+    bereich: 'ber', menge: 'ber', fac: 'fact', fakt: 'fact'
+  };
+  function nthRoot(x, n) {
+    if (n === 0) return NaN;
+    if (x < 0) { return (Math.round(n) === n && Math.abs(n % 2) === 1) ? -Math.pow(-x, 1 / n) : NaN; }
+    return Math.pow(x, 1 / n);
+  }
+  FUNCS.fact = [1, 1, function (a) { return fact(a[0]); }];
+
+  var VARS_X = { x: 1, t: 1 };          // t als Alias für x (Physik: s(t))
+  var VARS_Z = { z: 1, a: 1, k: 1 };    // Scharparameter
+  var CONSTS = { pi: Math.PI, e: Math.E };
+
+  var NAMES = (function () {
+    var n = [];
+    var add = function (o) { for (var k in o) n.push(k); };
+    add(FUNCS); add(ALIASES); add(VARS_X); add(VARS_Z); add(CONSTS);
+    n.sort(function (a, b) { return b.length - a.length; });
+    return n;
+  })();
+
+  function preprocess(s) {
+    s = String(s)
+      .replace(/[−–—]/g, '-')
+      .replace(/[·×∙⋅]/g, '*')
+      .replace(/÷|:/g, '/')
+      .replace(/²/g, '^2').replace(/³/g, '^3')
+      .replace(/π/g, 'pi').replace(/√/g, 'sqrt')
+      .replace(/ /g, ' ');
+    s = s.toLowerCase();
+    /* führendes "y =", "f(x) =", "s(t) =" entfernen */
+    s = s.replace(/^\s*[a-zäöü][a-zäöü0-9_']*\s*(\(\s*[a-z]\s*\))?\s*=/, '');
+    /* Dezimalkomma */
+    s = s.replace(/(\d),(?=\d)/g, '$1.');
+    s = s.replace(/,/g, ';');
+    return s;
+  }
+
+  function tokenize(s) {
+    var toks = [], i = 0, m;
+    while (i < s.length) {
+      var c = s.charAt(i);
+      if (c === ' ' || c === '\t') { i++; continue; }
+      if ((m = /^(\d+\.?\d*|\.\d+)/.exec(s.slice(i)))) {
+        toks.push({ t: 'num', v: parseFloat(m[1]), s: m[1] }); i += m[1].length; continue;
+      }
+      if (/[a-zäöü_]/.test(c)) {
+        m = /^[a-zäöü_]+/.exec(s.slice(i));
+        var word = m[0], j = 0;
+        while (j < word.length) {
+          var hit = null;
+          for (var k = 0; k < NAMES.length; k++) {
+            if (word.substr(j, NAMES[k].length) === NAMES[k]) { hit = NAMES[k]; break; }
+          }
+          if (!hit) throw new TermError('Unbekannter Name „' + word.slice(j) + '“');
+          toks.push({ t: 'id', v: hit, s: hit });
+          j += hit.length;
+        }
+        i += word.length; continue;
+      }
+      if ('+-*/^'.indexOf(c) >= 0) { toks.push({ t: 'op', v: c, s: c }); i++; continue; }
+      if (c === '(' || c === '[' || c === '{') { toks.push({ t: '(', s: '(' }); i++; continue; }
+      if (c === ')' || c === ']' || c === '}') { toks.push({ t: ')', s: ')' }); i++; continue; }
+      if (c === ';') { toks.push({ t: ';', s: ';' }); i++; continue; }
+      if (c === '|') { toks.push({ t: '|', s: '|' }); i++; continue; }
+      if (c === '!') { toks.push({ t: '!', s: '!' }); i++; continue; }
+      throw new TermError('Unerwartetes Zeichen „' + c + '“');
+    }
+    return toks;
+  }
+
+  /* Liefert f(x, z) mit Eigenschaften usesX, usesZ. opts.deg: Winkel in Grad */
+  function compile(src, opts) {
+    opts = opts || {};
+    var deg = !!opts.deg;
+    var toks = tokenize(preprocess(src));
+    if (!toks.length) throw new TermError('Leerer Term');
+    var i = 0, usesX = false, usesZ = false, absDepth = 0;
+    function peek() { return toks[i]; }
+    function next() { return toks[i++]; }
+    function expect(t, what) {
+      var k = next();
+      if (!k || k.t !== t) throw new TermError((what || ('„' + t + '“')) + ' fehlt' + (k ? ' vor „' + k.s + '“' : ' am Ende'));
+    }
+    function startsPrimary(k) { return k && (k.t === 'num' || k.t === 'id' || k.t === '(' || (k.t === '|' && absDepth === 0)); }
+
+    function parseExpr() {
+      var a = parseTerm();
+      for (;;) {
+        var k = peek();
+        if (k && k.t === 'op' && (k.v === '+' || k.v === '-')) {
+          next();
+          var b = parseTerm();
+          a = k.v === '+' ? add(a, b) : sub(a, b);
+        } else break;
+      }
+      return a;
+    }
+    function parseTerm() {
+      var a = parseUnary();
+      for (;;) {
+        var k = peek();
+        if (k && k.t === 'op' && (k.v === '*' || k.v === '/')) {
+          next();
+          var b = parseUnary();
+          a = k.v === '*' ? mul(a, b) : div(a, b);
+        } else if (startsPrimary(k)) {
+          a = mul(a, parsePower());       // implizite Multiplikation: 2x, 3(x+1), x sin(x)
+        } else break;
+      }
+      return a;
+    }
+    function parseUnary() {
+      var k = peek();
+      if (k && k.t === 'op' && (k.v === '-' || k.v === '+')) {
+        next();
+        var a = parseUnary();
+        return k.v === '-' ? neg(a) : a;
+      }
+      return parsePower();
+    }
+    function parsePower() {
+      var base = parsePostfix();
+      var k = peek();
+      if (k && k.t === 'op' && k.v === '^') {
+        next();
+        return pow(base, parseUnary());
+      }
+      return base;
+    }
+    function parsePostfix() {
+      var a = parsePrimary();
+      while (peek() && peek().t === '!') { next(); a = factN(a); }
+      return a;
+    }
+    function parsePrimary() {
+      var k = next();
+      if (!k) throw new TermError('Term endet unerwartet');
+      if (k.t === 'num') { var v = k.v; return function () { return v; }; }
+      if (k.t === '(') { var e = parseExpr(); expect(')', 'Schließende Klammer'); return e; }
+      if (k.t === '|') { absDepth++; var a = parseExpr(); absDepth--; expect('|', 'Betragsstrich'); return absN(a); }
+      if (k.t === 'id') {
+        var n = k.v;
+        if (VARS_X[n]) { usesX = true; return function (x) { return x; }; }
+        if (VARS_Z[n]) { usesZ = true; return function (x, z) { return z; }; }
+        if (CONSTS[n] !== undefined) { var c = CONSTS[n]; return function () { return c; }; }
+        var fname = ALIASES[n] || n, def = FUNCS[fname];
+        if (!def) throw new TermError('Unbekannte Funktion „' + n + '“');
+        var args = [];
+        if (peek() && peek().t === '(') {
+          next();
+          args.push(parseExpr());
+          while (peek() && peek().t === ';') { next(); args.push(parseExpr()); }
+          expect(')', 'Schließende Klammer');
+        } else {
+          if (!peek()) throw new TermError('Nach „' + n + '“ fehlt das Argument');
+          args.push(parsePower());
+        }
+        if (args.length < def[0] || args.length > def[1]) {
+          throw new TermError('„' + n + '“ erwartet ' + (def[0] === def[1] ? def[0] : def[0] + '–' + def[1]) +
+            ' Argument' + (def[1] > 1 ? 'e (getrennt mit ;)' : ''));
+        }
+        if (fname === 'ber') usesX = true;
+        var impl = def[2], na = args.length;
+        return function (x, z) {
+          var av = new Array(na);
+          for (var j = 0; j < na; j++) av[j] = args[j](x, z);
+          return impl(av, x, deg);
+        };
+      }
+      throw new TermError('Unerwartetes „' + k.s + '“');
+    }
+
+    var root = parseExpr();
+    if (i < toks.length) throw new TermError('Unerwartetes „' + toks[i].s + '“');
+    var f = function (x, z) {
+      var v = root(x, z === undefined ? 1 : z);
+      return (typeof v === 'number' && isFinite(v)) ? v : NaN;
+    };
+    f.usesX = usesX; f.usesZ = usesZ;
+    return f;
+  }
+  function add(a, b) { return function (x, z) { return a(x, z) + b(x, z); }; }
+  function sub(a, b) { return function (x, z) { return a(x, z) - b(x, z); }; }
+  function mul(a, b) { return function (x, z) { return a(x, z) * b(x, z); }; }
+  function div(a, b) { return function (x, z) { var d = b(x, z); return d === 0 ? NaN : a(x, z) / d; }; }
+  function neg(a) { return function (x, z) { return -a(x, z); }; }
+  function absN(a) { return function (x, z) { return Math.abs(a(x, z)); }; }
+  function factN(a) { return function (x, z) { return fact(a(x, z)); }; }
+  function pow(a, b) {
+    return function (x, z) {
+      var p = a(x, z), q = b(x, z);
+      if (p < 0 && Math.round(q) !== q) {
+        /* ungerade Wurzeln negativer Zahlen zulassen, z. B. x^(1/3) */
+        var inv = 1 / q, ri = Math.round(inv);
+        if (Math.abs(inv - ri) < 1e-9 && Math.abs(ri % 2) === 1) return -Math.pow(-p, q);
+        return NaN;
+      }
+      return Math.pow(p, q);
+    };
+  }
+
+  /* ======================= Voreinstellungen ======================= */
+
+  var DEFAULTS = {
+    v: 1,
+    x: { min: '-5', max: '5', per: '1', step: '1', labels: 'all', name: 'x' },
+    y: { min: '-4', max: '4', per: '1', step: '1', labels: 'all', name: 'y' },
+    grid: { type: 'karo5', color: '#9a9a9a', width: 0.3, margin: 5 },
+    axes: { show: true, width: 1, tick: 2, arrow: 'm', origin: 'O', italic: true },
+    font: { family: 'Arial', size: 10, comma: true, halo: false },
+    funcs: [],
+    schar: { from: '1', to: '3', step: '1' },
+    deg: false,
+    points: { text: '', marker: 'x', size: 2.2, connect: false, width: 1, names: true },
+    background: true
+  };
+  var FUNC_DEFAULT = { term: '', style: 'solid', width: 1.5, color: '#000000', from: '', to: '', label: '' };
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function merge(base, over) {
+    var out = clone(base);
+    if (!over || typeof over !== 'object') return out;
+    for (var k in over) {
+      if (!Object.prototype.hasOwnProperty.call(over, k)) continue;
+      var v = over[k];
+      if (Array.isArray(v)) out[k] = clone(v);
+      else if (v && typeof v === 'object' && out[k] && typeof out[k] === 'object' && !Array.isArray(out[k])) out[k] = merge(out[k], v);
+      else out[k] = v;
+    }
+    return out;
+  }
+  function normalize(cfg) {
+    var c = merge(DEFAULTS, cfg);
+    c.funcs = (c.funcs || []).map(function (f) { return merge(FUNC_DEFAULT, f); });
+    return c;
+  }
+
+  /* ======================= Messpunkte ======================= */
+
+  function parsePoints(text) {
+    var out = [], errors = [];
+    String(text || '').split(/\r?\n/).forEach(function (raw, idx) {
+      var line = raw.trim();
+      if (!line || line.charAt(0) === '#') return;
+      var name = '';
+      var m = /^([A-Za-zÄÖÜäöü][A-Za-zÄÖÜäöü0-9_'’₀-₉]*)\s*(?=[(\s\-\d.,|;])/.exec(line);
+      if (m && !/^(pi|e)$/i.test(m[1])) { name = m[1]; line = line.slice(m[0].length).trim(); }
+      line = line.replace(/^[(\[]\s*/, '').replace(/\s*[)\]]$/, '');
+      var parts = line.split(/\s*[|;\t]\s*/);
+      if (parts.length !== 2) {
+        if (/,\s/.test(line)) parts = line.split(/\s*,\s*/);
+        else if (/\s/.test(line)) parts = line.split(/\s+/);
+        else if ((line.match(/,/g) || []).length === 1 && line.indexOf('.') >= 0) parts = line.split(',');
+      }
+      if (parts.length !== 2) { errors.push('Zeile ' + (idx + 1) + ': „' + raw.trim() + '“ nicht lesbar (Format: x | y)'); return; }
+      var x = num(parts[0]), y = num(parts[1]);
+      if (!isFinite(x) || !isFinite(y)) { errors.push('Zeile ' + (idx + 1) + ': Zahl nicht lesbar'); return; }
+      out.push({ name: name, x: x, y: y });
+    });
+    return { points: out, errors: errors };
+  }
+
+  /* ======================= Zeichnen ======================= */
+
+  var PT = 25.4 / 72;   // 1 pt in mm
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function r2(v) { return Math.round(v * 100) / 100; }
+  function r3(v) { return Math.round(v * 1000) / 1000; }
+
+  /* Schätzung der Textbreite (nur wenn kein Canvas zum Messen da ist) */
+  function approxMeasure(text, sizeMm) {
+    var w = 0;
+    for (var i = 0; i < text.length; i++) {
+      var c = text.charAt(i);
+      if (/[0-9]/.test(c)) w += 0.556;
+      else if (c === '−' || c === '+' || c === '=') w += 0.584;
+      else if (/[,.:;| ]/.test(c)) w += 0.278;
+      else if (/[il]/.test(c)) w += 0.222;
+      else if (/[mwMW]/.test(c)) w += 0.85;
+      else if (/[A-ZÄÖÜ]/.test(c)) w += 0.667;
+      else w += 0.5;
+    }
+    return w * sizeMm;
+  }
+
+  var DASH = {
+    solid: null,
+    dashed: function (w) { return [Math.max(2.4, 4 * w), Math.max(1.4, 2.4 * w)]; },
+    dotted: function (w) { return [0.01, Math.max(0.9, 2.2 * w)]; },
+    dashdot: function (w) { return [Math.max(2.4, 4 * w), Math.max(1, 1.8 * w), 0.01, Math.max(1, 1.8 * w)]; }
+  };
+  var ARROWS = { none: null, s: [2.0, 1.5], m: [2.8, 2.0], l: [3.6, 2.6] };
+  var GRID_STEP = { karo5: 5, karo10: 10, mm: 1, dots: 5, none: 5 };
+
+  /* Liang-Barsky-Clipping einer Strecke am Rechteck */
+  function clipSeg(x0, y0, x1, y1, L, T, R, B) {
+    var t0 = 0, t1 = 1, dx = x1 - x0, dy = y1 - y0;
+    var p = [-dx, dx, -dy, dy], q = [x0 - L, R - x0, y0 - T, B - y0];
+    for (var i = 0; i < 4; i++) {
+      if (p[i] === 0) { if (q[i] < 0) return null; }
+      else {
+        var t = q[i] / p[i];
+        if (p[i] < 0) { if (t > t1) return null; if (t > t0) t0 = t; }
+        else { if (t < t0) return null; if (t < t1) t1 = t; }
+      }
+    }
+    return [x0 + t0 * dx, y0 + t0 * dy, x0 + t1 * dx, y0 + t1 * dy, t0 > 0, t1 < 1];
+  }
+
+  /**
+   * render(cfg, {measure}) → { svg, w, h (mm), warnings, error }
+   * measure(text, sizeMm, italic, family) → Breite in mm
+   */
+  function render(cfgIn, env) {
+    env = env || {};
+    var cfg = normalize(cfgIn);
+    var measure = env.measure || function (t, s) { return approxMeasure(t, s); };
+    var warnings = [];
+    var comma = cfg.font.comma !== false;
+    var fmt = function (v) { return fmtNum(v, comma); };
+
+    var xmin = num(cfg.x.min), xmax = num(cfg.x.max), ymin = num(cfg.y.min), ymax = num(cfg.y.max);
+    var perX = num(cfg.x.per), perY = num(cfg.y.per);
+    if (![xmin, xmax, ymin, ymax].every(isFinite)) return { error: 'Bitte gültige Werte für den Bereich eingeben.' };
+    if (!(perX > 0) || !(perY > 0)) return { error: 'Der Maßstab muss größer als 0 sein.' };
+    if (xmin >= xmax) return { error: 'x: Der Minimalwert muss kleiner als der Maximalwert sein.' };
+    if (ymin >= ymax) return { error: 'y: Der Minimalwert muss kleiner als der Maximalwert sein.' };
+
+    var kx = 10 / perX, ky = 10 / perY;               // mm pro Einheit
+    var X = function (v) { return v * kx; };
+    var Y = function (v) { return -v * ky; };
+    if ((xmax - xmin) * kx > 600 || (ymax - ymin) * ky > 600) return { error: 'Das KOS wäre größer als 60 cm. Bitte Bereich oder Maßstab anpassen.' };
+
+    var fs = Math.max(4, Math.min(40, Number(cfg.font.size) || 10)) * PT;   // Schriftgröße in mm
+    var asc = 0.72 * fs;
+    var family = cfg.font.family || 'Arial';
+    var gt = cfg.grid.type in GRID_STEP ? cfg.grid.type : 'karo5';
+    var gStep = GRID_STEP[gt];
+    var base = gt === 'karo10' ? 10 : 5;
+    var margin = Math.max(0, Number(cfg.grid.margin));
+    if (!isFinite(margin)) margin = 5;
+
+    var eps = 1e-7;
+    var L = Math.floor((X(xmin) - margin) / base + eps) * base;
+    var R = Math.ceil((X(xmax) + margin) / base - eps) * base;
+    var T = Math.floor((Y(ymax) - margin) / base + eps) * base;
+    var B = Math.ceil((Y(ymin) + margin) / base - eps) * base;
+    if (margin === 0) { L = X(xmin); R = X(xmax); T = Y(ymax); B = Y(ymin); }
+
+    var bb = { x0: L, y0: T, x1: R, y1: B };
+    function inc(x0, y0, x1, y1) {
+      if (x0 < bb.x0) bb.x0 = x0; if (y0 < bb.y0) bb.y0 = y0;
+      if (x1 > bb.x1) bb.x1 = x1; if (y1 > bb.y1) bb.y1 = y1;
+    }
+
+    var layers = { grid: [], axes: [], graphs: [], points: [], text: [] };
+    var stroke = function (color, wPt, extra) {
+      return 'fill="none" stroke="' + esc(color) + '" stroke-width="' + r3(wPt * PT) + '"' + (extra || '');
+    };
+
+    /* ---------- Raster ---------- */
+    var gColor = cfg.grid.color || '#9a9a9a';
+    var gw = Math.max(0.05, Number(cfg.grid.width) || 0.3);
+    if (gt === 'karo5' || gt === 'karo10') {
+      var d = '';
+      for (var gx = L; gx <= R + eps; gx += gStep) d += 'M' + r2(gx) + ' ' + r2(T) + 'V' + r2(B);
+      for (var gy = T; gy <= B + eps; gy += gStep) d += 'M' + r2(L) + ' ' + r2(gy) + 'H' + r2(R);
+      layers.grid.push('<path d="' + d + '" ' + stroke(gColor, gw, ' stroke-linecap="square"') + '/>');
+    } else if (gt === 'mm') {
+      var d1 = '', d5 = '', d10 = '';
+      var nx = Math.round((R - L)), ny = Math.round((B - T));
+      for (var ix = 0; ix <= nx; ix++) {
+        var vx = L + ix, ax = Math.round(vx);
+        var s = 'M' + r2(vx) + ' ' + r2(T) + 'V' + r2(B);
+        if (ax % 10 === 0) d10 += s; else if (ax % 5 === 0) d5 += s; else d1 += s;
+      }
+      for (var iy = 0; iy <= ny; iy++) {
+        var vy = T + iy, ay = Math.round(vy);
+        var s2 = 'M' + r2(L) + ' ' + r2(vy) + 'H' + r2(R);
+        if (ay % 10 === 0) d10 += s2; else if (ay % 5 === 0) d5 += s2; else d1 += s2;
+      }
+      layers.grid.push('<path d="' + d1 + '" ' + stroke(gColor, gw * 0.55) + '/>');
+      layers.grid.push('<path d="' + d5 + '" ' + stroke(gColor, gw * 1.1) + '/>');
+      layers.grid.push('<path d="' + d10 + '" ' + stroke(gColor, gw * 2) + '/>');
+    } else if (gt === 'dots') {
+      var rr = Math.max(0.15, gw * 0.9 * PT * 2.2);
+      var dots = '';
+      for (var px = L; px <= R + eps; px += gStep) {
+        for (var py = T; py <= B + eps; py += gStep) {
+          dots += '<circle cx="' + r2(px) + '" cy="' + r2(py) + '" r="' + r3(rr) + '"/>';
+        }
+      }
+      layers.grid.push('<g fill="' + esc(gColor) + '" stroke="none">' + dots + '</g>');
+    }
+
+    /* ---------- Texthilfen ---------- */
+    function textEl(str, x, yBase, opt) {
+      opt = opt || {};
+      var italic = !!opt.italic;
+      var w = measure(str, fs, italic, family);
+      var x0 = opt.anchor === 'end' ? x - w : opt.anchor === 'middle' ? x - w / 2 : x;
+      if (cfg.font.halo) {
+        layers.text.push('<rect x="' + r2(x0 - 0.4) + '" y="' + r2(yBase - asc - 0.35) + '" width="' + r2(w + 0.8) +
+          '" height="' + r2(asc + 0.35 + fs * 0.28) + '" fill="#ffffff" stroke="none"/>');
+      }
+      layers.text.push('<text x="' + r2(x0) + '" y="' + r2(yBase) + '" font-family="' + esc(family) + '" font-size="' + r3(fs) +
+        '"' + (italic ? ' font-style="italic"' : '') + ' fill="' + esc(opt.color || '#000000') + '">' + esc(str) + '</text>');
+      inc(x0 - 0.5 - (italic ? 0.3 : 0), yBase - asc - 0.5, x0 + w + 0.5 + (italic ? 0.6 : 0), yBase + fs * 0.25 + 0.5);
+      return { x0: x0, x1: x0 + w, w: w };
+    }
+    /* Zahl so setzen, dass die Ziffern (ohne Minus) über dem Strich zentriert sind */
+    function numberLabelX(v, cx, yBase) {
+      var s = fmt(v);
+      if (s.charAt(0) === '−') {
+        var digits = s.slice(1);
+        var wd = measure(digits, fs, false, family), wm = measure('−', fs, false, family);
+        return textEl(s, cx - wd / 2 - wm, yBase);
+      }
+      return textEl(s, cx, yBase, { anchor: 'middle' });
+    }
+
+    /* ---------- Achsen ---------- */
+    var xAxisAtZero = ymin <= 0 && ymax >= 0, yAxisAtZero = xmin <= 0 && xmax >= 0;
+    var axY = xAxisAtZero ? Y(0) : (ymin > 0 ? Y(ymin) : Y(ymax));
+    var axX = yAxisAtZero ? X(0) : (xmin > 0 ? X(xmin) : X(xmax));
+    var tick = Math.max(0, Number(cfg.axes.tick));
+    if (!isFinite(tick)) tick = 2;
+    var arrow = ARROWS[cfg.axes.arrow] || null;
+    var aw = Math.max(0.2, Number(cfg.axes.width) || 1);
+
+    function tickValues(min, max, stepStr, per, mode) {
+      var step = num(stepStr);
+      if (!(step > 0)) step = per;
+      var k0 = Math.ceil(min / step - 1e-9), k1 = Math.floor(max / step + 1e-9);
+      if (k1 - k0 > 500) { warnings.push('Zu viele Teilstriche – Schrittweite vergrößern.'); k1 = k0 + 500; }
+      var out = [];
+      for (var k = k0; k <= k1; k++) {
+        var v = k * step;
+        var lab;
+        switch (mode) {
+          case 'none': lab = false; break;
+          case '1': lab = k === 1; break;
+          case '2': lab = k % 2 === 0; break;
+          case '5': lab = k % 5 === 0; break;
+          case '1+5': lab = k === 1 || k % 5 === 0; break;
+          default: lab = true;
+        }
+        out.push({ v: v, k: k, label: lab });
+      }
+      return out;
+    }
+
+    if (cfg.axes.show) {
+      var tipX = Math.max(R, X(xmax) + 4), tipY = Math.min(T, Y(ymax) - 4);
+      var xStart = Math.min(L, X(xmin)), yStart = Math.max(B, Y(ymin));
+      var al = arrow ? arrow[0] : 0, awh = arrow ? arrow[1] / 2 : 0;
+      var lineEndX = tipX - al * 0.6, lineEndY = tipY + al * 0.6;
+      layers.axes.push('<path d="M' + r2(xStart) + ' ' + r2(axY) + 'H' + r2(arrow ? lineEndX : tipX) +
+        'M' + r2(axX) + ' ' + r2(yStart) + 'V' + r2(arrow ? lineEndY : tipY) + '" ' + stroke('#000000', aw, ' stroke-linecap="butt"') + '/>');
+      if (arrow) {
+        layers.axes.push('<path d="M' + r2(tipX) + ' ' + r2(axY) + 'L' + r2(tipX - al) + ' ' + r2(axY - awh) + 'L' + r2(tipX - al) + ' ' + r2(axY + awh) +
+          'Z M' + r2(axX) + ' ' + r2(tipY) + 'L' + r2(axX - awh) + ' ' + r2(tipY + al) + 'L' + r2(axX + awh) + ' ' + r2(tipY + al) + 'Z" fill="#000000" stroke="none"/>');
+      }
+      inc(xStart, tipY, tipX, yStart);
+
+      var tx = tickValues(xmin, xmax, cfg.x.step, perX, cfg.x.labels);
+      var ty = tickValues(ymin, ymax, cfg.y.step, perY, cfg.y.labels);
+      var origin = xAxisAtZero && yAxisAtZero;
+      var td = '';
+      var half = tick / 2;
+      var lastXLabel = null, topYLabel = null;
+      var xLabBase = axY + half + 0.7 + asc;
+      tx.forEach(function (t) {
+        if (Math.abs(t.v) < 1e-12 && yAxisAtZero) return;
+        if (tick > 0) td += 'M' + r2(X(t.v)) + ' ' + r2(axY - half) + 'V' + r2(axY + half);
+        if (t.label) lastXLabel = numberLabelX(t.v, X(t.v), xLabBase);
+      });
+      ty.forEach(function (t) {
+        if (Math.abs(t.v) < 1e-12 && xAxisAtZero) return;
+        if (tick > 0) td += 'M' + r2(axX - half) + ' ' + r2(Y(t.v)) + 'H' + r2(axX + half);
+        if (t.label) {
+          var yb = Y(t.v) + 0.36 * fs;
+          var el = textEl(fmt(t.v), axX - half - 0.8, yb, { anchor: 'end' });
+          if (!topYLabel || Y(t.v) < topYLabel.y) topYLabel = { y: Y(t.v), el: el };
+        }
+      });
+      if (td) layers.axes.push('<path d="' + td + '" ' + stroke('#000000', Math.max(0.3, aw * 0.75)) + '/>');
+
+      if (origin && cfg.axes.origin && cfg.axes.origin !== 'none') {
+        textEl(cfg.axes.origin === '0' ? '0' : 'O', axX - half - 0.8, xLabBase, { anchor: 'end' });
+      }
+
+      /* Achsenbezeichnungen */
+      var it = cfg.axes.italic !== false;
+      var nx = String(cfg.x.name || '').trim(), ny = String(cfg.y.name || '').trim();
+      if (nx) {
+        var wn = measure(nx, fs, it, family);
+        var fitsUnder = !lastXLabel || lastXLabel.x1 + 1.0 < tipX - wn;
+        if (fitsUnder) textEl(nx, tipX, xLabBase, { anchor: 'end', italic: it });
+        else textEl(nx, tipX + 1.2, axY + 0.36 * fs, { italic: it });
+      }
+      if (ny) {
+        var nyBase = tipY + asc;
+        var collide = topYLabel && (nyBase + fs * 0.2 + 0.2 > topYLabel.y - 0.36 * fs);
+        if (!collide) textEl(ny, axX - Math.max(half, awh) - 1.0, nyBase, { anchor: 'end', italic: it });
+        else textEl(ny, axX + Math.max(half, awh) + 1.2, nyBase, { italic: it });
+      }
+    }
+
+    /* ---------- Funktionsgraphen ---------- */
+    var zf = num(cfg.schar.from, 1), zt = num(cfg.schar.to, 1), zd = num(cfg.schar.step, 1);
+    var zList = [];
+    if (isFinite(zf) && isFinite(zt)) {
+      if (zf > zt) { var tmp = zf; zf = zt; zt = tmp; }
+      if (!(zd > 0)) zd = 1;
+      for (var zz = zf; zz <= zt + zd * 1e-6 && zList.length < 50; zz += zd) zList.push(Number(zz.toPrecision(12)));
+    }
+    if (!zList.length) zList = [1];
+
+    var visXmin = L / kx, visXmax = R / kx;
+    var H = B - T;
+    cfg.funcs.forEach(function (fn, idx) {
+      var term = String(fn.term || '').trim();
+      if (!term) return;
+      var f;
+      try { f = compile(term, { deg: cfg.deg }); }
+      catch (e) { warnings.push('Funktion ' + (idx + 1) + ': ' + e.message); return; }
+      var dFrom = num(fn.from, -Infinity), dTo = num(fn.to, Infinity);
+      if (isNaN(dFrom)) dFrom = -Infinity; if (isNaN(dTo)) dTo = Infinity;
+      if (dFrom > dTo) { var t2 = dFrom; dFrom = dTo; dTo = t2; }
+      var a = Math.max(visXmin, dFrom), b = Math.min(visXmax, dTo);
+      if (a >= b) return;
+      var wPt = Math.max(0.2, Number(fn.width) || 1.5);
+      var color = fn.color || '#000000';
+      var dashF = DASH[fn.style] || null;
+      var dashAttr = '';
+      if (dashF) {
+        var arr = dashF(wPt * PT);
+        dashAttr = ' stroke-dasharray="' + arr.map(r3).join(' ') + '"';
+      }
+      var zs = f.usesZ ? zList : [1];
+      var stepMm = 0.2;
+      var n = Math.min(20000, Math.max(50, Math.ceil((b - a) * kx / stepMm)));
+      zs.forEach(function (z) {
+        var d = '', last = null, pen = false, lastVis = null;
+        var prev = null;
+        for (var i = 0; i <= n; i++) {
+          var x = a + (b - a) * i / n;
+          var yv = f(x, z);
+          var cur = isFinite(yv) ? { x: x, y: yv, px: X(x), py: Y(yv) } : null;
+          if (prev && cur) {
+            var brk = false;
+            if (Math.abs(cur.py - prev.py) > H * 0.5) {
+              /* möglicher Sprung / Polstelle: Mittelwert prüfen */
+              var xm = (prev.x + cur.x) / 2, ym = f(xm, z);
+              var lo = Math.min(prev.y, cur.y), hi = Math.max(prev.y, cur.y);
+              if (!isFinite(ym) || ym < lo - (hi - lo) * 0.01 || ym > hi + (hi - lo) * 0.01) brk = true;
+              else {
+                var xq = prev.x + (cur.x - prev.x) * 0.25, yq = f(xq, z), xr = prev.x + (cur.x - prev.x) * 0.75, yr = f(xr, z);
+                if (!isFinite(yq) || !isFinite(yr) || (prev.y < cur.y ? !(yq <= ym + 1e-9 && ym <= yr + 1e-9) : !(yq >= ym - 1e-9 && ym >= yr - 1e-9))) brk = true;
+              }
+            }
+            if (brk) pen = false;
+            else {
+              var c = clipSeg(prev.px, prev.py, cur.px, cur.py, L, T, R, B);
+              if (c) {
+                if (!pen || !last || Math.abs(last[0] - c[0]) > 1e-6 || Math.abs(last[1] - c[1]) > 1e-6) {
+                  d += 'M' + r2(c[0]) + ' ' + r2(c[1]);
+                }
+                d += 'L' + r2(c[2]) + ' ' + r2(c[3]);
+                last = [c[2], c[3]];
+                lastVis = { x: c[2], y: c[3] };
+                pen = !c[5];
+              } else pen = false;
+            }
+          } else pen = false;
+          prev = cur;
+        }
+        if (!d) return;
+        layers.graphs.push('<path d="' + d + '" ' + stroke(color, wPt, ' stroke-linejoin="round" stroke-linecap="round"' + dashAttr) + '/>');
+
+        var lab = String(fn.label || '').trim();
+        if (lab && lastVis) {
+          var txt = lab;
+          if (f.usesZ) txt = lab.indexOf('{z}') >= 0 ? lab.replace(/\{z\}/g, fmt(z)) : (zs.length > 1 ? 'z = ' + fmt(z) : lab);
+          var wl = measure(txt, fs, false, family);
+          var nearRight = R - lastVis.x < wl + 3;
+          var yb = lastVis.y - 1.2;
+          if (yb - asc < T + 0.5) yb = lastVis.y + asc + 1.2;
+          if (nearRight) textEl(txt, lastVis.x - 1.2, yb, { anchor: 'end', color: color });
+          else textEl(txt, lastVis.x + 1.2, yb, { color: color });
+        }
+      });
+    });
+
+    /* ---------- Messpunkte ---------- */
+    var pp = parsePoints(cfg.points.text);
+    pp.errors.forEach(function (e) { warnings.push('Punkte: ' + e); });
+    if (pp.points.length) {
+      var ms = Math.max(0.8, Number(cfg.points.size) || 2.2), mh = ms / 2;
+      var pw = Math.max(0.3, Number(cfg.points.width) || 1);
+      var md = '', fills = '', conn = '', outside = 0;
+      pp.points.forEach(function (p, i) {
+        var qx = X(p.x), qy = Y(p.y);
+        if (qx < L - eps || qx > R + eps || qy < T - eps || qy > B + eps) { outside++; return; }
+        switch (cfg.points.marker) {
+          case '+': md += 'M' + r2(qx - mh) + ' ' + r2(qy) + 'H' + r2(qx + mh) + 'M' + r2(qx) + ' ' + r2(qy - mh) + 'V' + r2(qy + mh); break;
+          case 'o': layers.points.push('<circle cx="' + r2(qx) + '" cy="' + r2(qy) + '" r="' + r2(mh * 0.8) + '" ' + stroke('#000000', pw) + '/>'); break;
+          case 'dot': fills += '<circle cx="' + r2(qx) + '" cy="' + r2(qy) + '" r="' + r2(mh * 0.45) + '"/>'; break;
+          default: { var h = mh * 0.75; md += 'M' + r2(qx - h) + ' ' + r2(qy - h) + 'L' + r2(qx + h) + ' ' + r2(qy + h) + 'M' + r2(qx - h) + ' ' + r2(qy + h) + 'L' + r2(qx + h) + ' ' + r2(qy - h); }
+        }
+        conn += (conn ? 'L' : 'M') + r2(qx) + ' ' + r2(qy);
+        if (cfg.points.names !== false && p.name) textEl(p.name, qx + mh + 0.6, qy - 0.8, {});
+      });
+      if (cfg.points.connect && conn) layers.points.unshift('<path d="' + conn + '" ' + stroke('#000000', pw, ' stroke-linejoin="round"') + '/>');
+      if (md) layers.points.push('<path d="' + md + '" ' + stroke('#000000', pw, ' stroke-linecap="round"') + '/>');
+      if (fills) layers.points.push('<g fill="#000000" stroke="none">' + fills + '</g>');
+      if (outside) warnings.push(outside + ' Punkt' + (outside > 1 ? 'e liegen' : ' liegt') + ' außerhalb des Bereichs.');
+    }
+
+    /* ---------- SVG zusammensetzen ---------- */
+    var pad = 0.8;
+    var vx0 = bb.x0 - pad, vy0 = bb.y0 - pad, vw = bb.x1 - bb.x0 + 2 * pad, vh = bb.y1 - bb.y0 + 2 * pad;
+    var units = env.units === 'px' ? 'px' : 'mm';
+    var wAttr = units === 'px' ? r2(vw / 25.4 * 96) : r2(vw) + 'mm';
+    var hAttr = units === 'px' ? r2(vh / 25.4 * 96) : r2(vh) + 'mm';
+    var parts = [];
+    parts.push('<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + wAttr + '" height="' + hAttr +
+      '" viewBox="' + r2(vx0) + ' ' + r2(vy0) + ' ' + r2(vw) + ' ' + r2(vh) + '">');
+    if (cfg.background !== false) parts.push('<rect x="' + r2(vx0) + '" y="' + r2(vy0) + '" width="' + r2(vw) + '" height="' + r2(vh) + '" fill="#ffffff" stroke="none"/>');
+    ['grid', 'axes', 'graphs', 'points', 'text'].forEach(function (k) { parts.push.apply(parts, layers[k]); });
+    parts.push('</svg>');
+
+    return { svg: parts.join(''), w: vw, h: vh, warnings: warnings, gridW: R - L, gridH: B - T };
+  }
+
+  /* ======================= Wertetabelle ======================= */
+
+  function valueTable(cfgIn, t) {
+    var cfg = normalize(cfgIn);
+    var comma = cfg.font.comma !== false;
+    var from = num(t.from), to = num(t.to), step = num(t.step);
+    if (![from, to, step].every(isFinite)) return { error: 'Bitte gültige Werte für die Wertetabelle eingeben.' };
+    if (!(step > 0)) return { error: 'Die Schrittweite muss größer als 0 sein.' };
+    if (from > to) { var h = from; from = to; to = h; }
+    var xs = [];
+    for (var k = 0; from + k * step <= to + step * 1e-6; k++) {
+      xs.push(Number((from + k * step).toPrecision(12)));
+      if (xs.length > 200) return { error: 'Zu viele Spalten – Schrittweite vergrößern.' };
+    }
+    var dec = Math.max(0, Math.min(6, parseInt(t.decimals, 10) || 0));
+    var f2 = function (v) {
+      if (!isFinite(v)) return '–';
+      var s = (Math.abs(v) < 0.5 * Math.pow(10, -dec) ? 0 : v).toFixed(dec);
+      if (t.trim !== false && s.indexOf('.') >= 0) s = s.replace(/0+$/, '').replace(/\.$/, '');
+      if (comma) s = s.replace('.', ',');
+      return s.replace(/^-/, '−');
+    };
+    var xName = String(t.xName || cfg.x.name || 'x');
+    var rows = [[xName].concat(xs.map(function (v) { return fmtNum(v, comma); }))];
+    var errs = [];
+    var zf = num(cfg.schar.from, 1), zt = num(cfg.schar.to, 1), zd = num(cfg.schar.step, 1);
+    (t.funcs || []).forEach(function (spec) {
+      var fn = cfg.funcs[spec.index];
+      var head = spec.head;
+      if (t.empty || spec.index < 0) { rows.push([head].concat(xs.map(function () { return ''; }))); return; }
+      if (!fn || !String(fn.term).trim()) return;
+      var f;
+      try { f = compile(fn.term, { deg: cfg.deg }); } catch (e) { errs.push('Funktion ' + (spec.index + 1) + ': ' + e.message); return; }
+      var zs = [1];
+      if (f.usesZ) {
+        zs = [];
+        if (!(zd > 0)) zd = 1;
+        for (var z = Math.min(zf, zt); z <= Math.max(zf, zt) + zd * 1e-6 && zs.length < 20; z += zd) zs.push(Number(z.toPrecision(12)));
+      }
+      zs.forEach(function (z) {
+        var label = head + (f.usesZ ? ' (z = ' + fmtNum(z, comma) + ')' : '');
+        rows.push([label].concat(xs.map(function (x) { return t.empty ? '' : f2(f(x, z)); })));
+      });
+    });
+    if (rows.length < 2) return { error: 'Keine Funktion für die Tabelle ausgewählt.' };
+    return { rows: rows, errors: errs };
+  }
+
+  return {
+    compile: compile, num: num, fmtNum: fmtNum, render: render, normalize: normalize,
+    parsePoints: parsePoints, valueTable: valueTable, DEFAULTS: DEFAULTS, FUNC_DEFAULT: FUNC_DEFAULT,
+    approxMeasure: approxMeasure, TermError: TermError
+  };
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports = KOS;
+
+</script>
+<script>
+/* KOSmos – Seitenleiste: Bedienung, Vorschau, Word-Anbindung */
+(function () {
+  'use strict';
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var SUB = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+  var STORE_LAST = 'kosmos.v1.last', STORE_TPL = 'kosmos.v1.templates';
+  var MARK = 'KOSmos:';
+
+  var TABLE_DEFAULT = { from: '-3', to: '3', step: '1', decimals: 2, empty: false, vertical: false, maxCols: 12, extra: '', xName: '', use: {} };
+
+  /* ---------- eingebaute Vorlagen ---------- */
+  var BUILTIN = [
+    { name: 'Leeres KOS (−5 … 5)', cfg: {} },
+    { name: 'KOS zum Selbstbeschriften (nur 1)', cfg: { x: { min: '-6', max: '6', labels: '1' }, y: { min: '-5', max: '5', labels: '1' } } },
+    { name: 'Physik: 1. Quadrant, t-s-Diagramm', cfg: {
+      x: { min: '0', max: '10', per: '1', step: '1', labels: 'all', name: 't in s' },
+      y: { min: '0', max: '8', per: '2', step: '2', labels: 'all', name: 's in m' },
+      axes: { origin: '0', italic: false } } },
+    { name: 'Physik: Messwerte mit Ausgleichsgerade', cfg: {
+      x: { min: '0', max: '6', per: '0,5', step: '0,5', labels: '2', name: 'U in V' },
+      y: { min: '0', max: '0,6', per: '0,05', step: '0,05', labels: '2', name: 'I in A' },
+      axes: { origin: '0', italic: false },
+      points: { text: '0,5 | 0,05\n1 | 0,1\n1,5 | 0,16\n2 | 0,2\n2,5 | 0,24\n3 | 0,31\n4 | 0,4\n5 | 0,49', marker: 'x' },
+      funcs: [{ term: '0,1x', style: 'dashed', width: 1, from: '0' }] } },
+    { name: 'Normalparabel', cfg: { x: { min: '-4', max: '4' }, y: { min: '-1', max: '9' }, funcs: [{ term: 'x^2', label: 'p' }] } },
+    { name: 'Geraden vergleichen', cfg: { funcs: [{ term: '2x - 1', label: 'g' }, { term: '-0,5x + 2', style: 'dashed', label: 'h' }] } },
+    { name: 'Sinus-Schar z·sin(x)', cfg: { x: { min: '-7', max: '7' }, y: { min: '-4', max: '4' }, schar: { from: '1', to: '3', step: '1' }, funcs: [{ term: 'z*sin(x)', label: 'z = {z}' }] } },
+    { name: 'Millimeterpapier 15 × 10 cm', cfg: { x: { min: '0', max: '15', name: 'x' }, y: { min: '0', max: '10' }, grid: { type: 'mm', color: '#9a9a9a', width: 0.3, margin: 0 }, axes: { origin: '0' } } }
+  ];
+
+  /* ---------- Zustand ---------- */
+  var cfg;
+  var inWord = false;
+
+  function storeGet(k) { try { var v = window.localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } }
+  function storeSet(k, v) { try { window.localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* ohne Speicher weiterarbeiten */ } }
+
+  function fullNormalize(o) {
+    var c = KOS.normalize(o || {});
+    var t = (o && o.table) || {};
+    c.table = JSON.parse(JSON.stringify(TABLE_DEFAULT));
+    for (var k in t) c.table[k] = t[k];
+    if (!c.table.use || typeof c.table.use !== 'object') c.table.use = {};
+    return c;
+  }
+
+  function getPath(o, p) { return p.split('.').reduce(function (a, k) { return a == null ? a : a[k]; }, o); }
+  function setPath(o, p, v) {
+    var ks = p.split('.'), last = ks.pop();
+    var t = ks.reduce(function (a, k) { if (a[k] == null || typeof a[k] !== 'object') a[k] = {}; return a[k]; }, o);
+    t[last] = v;
+  }
+
+  /* ---------- Textmessung (für exakte Beschriftung) ---------- */
+  var mctx = null, mcache = {};
+  function measure(text, sizeMm, italic, family) {
+    var key = (italic ? 'i' : 'n') + family + '|' + text;
+    var w = mcache[key];
+    if (w === undefined) {
+      if (!mctx) { try { mctx = document.createElement('canvas').getContext('2d'); } catch (e) { mctx = false; } }
+      if (mctx) {
+        mctx.font = (italic ? 'italic ' : '') + '100px "' + family + '", Arial, Helvetica, sans-serif';
+        w = mctx.measureText(text).width / 100;
+      } else w = KOS.approxMeasure(text, 1);
+      mcache[key] = w;
+    }
+    return w * sizeMm;
+  }
+
+  /* ---------- Formular füllen / lesen ---------- */
+  function fillForm() {
+    $$('[data-k]').forEach(function (el) {
+      var v = getPath(cfg, el.getAttribute('data-k'));
+      if (el.type === 'checkbox') el.checked = !!v;
+      else el.value = v == null ? '' : String(v);
+    });
+    $$('#gridSeg button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-v') === cfg.grid.type)); });
+    var shade = $('#gridShade'), known = $$('option', shade).some(function (o) { return o.value === cfg.grid.color; });
+    shade.value = known ? cfg.grid.color : 'custom';
+    $('#gridColorWrap').classList.toggle('hidden', known);
+    renderFuncs();
+  }
+
+  function readField(el) {
+    var p = el.getAttribute('data-k'), v;
+    if (el.type === 'checkbox') v = el.checked;
+    else if (el.type === 'number') { v = parseFloat(String(el.value).replace(',', '.')); if (!isFinite(v)) return; }
+    else if (el.tagName === 'SELECT' && (el.value === 'true' || el.value === 'false')) v = el.value === 'true';
+    else v = el.value;
+    setPath(cfg, p, v);
+  }
+
+  /* ---------- Funktionen ---------- */
+  var DEL_ICON = '<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+  function sub(n) { return String(n).split('').map(function (d) { return SUB[+d]; }).join(''); }
+
+  function renderFuncs() {
+    var box = $('#funcs');
+    box.innerHTML = '';
+    cfg.funcs.forEach(function (f, i) {
+      var card = document.createElement('div');
+      card.className = 'fcard';
+      card.innerHTML =
+        '<div class="fhead"><span class="fn">y' + sub(i + 1) + ' =</span>' +
+        '<input type="text" data-f="term" placeholder="z. B. 0,5x^2 - 2" spellcheck="false" autocomplete="off" autocapitalize="off">' +
+        '<button class="icon-btn" type="button" data-act="del" title="Funktion entfernen" aria-label="Funktion entfernen">' + DEL_ICON + '</button></div>' +
+        '<div class="ferr hidden"></div>' +
+        '<div class="frow">' +
+        '<label><span class="lbl">Strichart</span><select data-f="style"><option value="solid">durchgezogen</option><option value="dashed">gestrichelt</option><option value="dotted">gepunktet</option><option value="dashdot">Strich-Punkt</option></select></label>' +
+        '<label><span class="lbl">Stärke (pt)</span><input type="number" data-f="width" step="0.25" min="0.25" max="5"></label>' +
+        '<label><span class="lbl">Farbe</span><input type="color" data-f="color"></label></div>' +
+        '<div class="frow2">' +
+        '<label><span class="lbl">nur von x =</span><input type="text" data-f="from" placeholder="–"></label>' +
+        '<label><span class="lbl">bis x =</span><input type="text" data-f="to" placeholder="–"></label>' +
+        '<label><span class="lbl">Beschriftung</span><input type="text" data-f="label" placeholder="z. B. f"></label></div>';
+      $$('[data-f]', card).forEach(function (el) {
+        var k = el.getAttribute('data-f');
+        el.value = f[k] == null ? '' : String(f[k]);
+        var on = function () {
+          var v = el.value;
+          if (el.type === 'number') { v = parseFloat(String(v).replace(',', '.')); if (!isFinite(v)) return; }
+          if (cfg.funcs[i] !== f) return;   /* Karte gehört zu einer alten Liste */
+          f[k] = v;
+          if (k === 'term') { checkTerm(card, v); renderTableRows(); }
+          changed();
+        };
+        el.addEventListener('input', on);
+        el.addEventListener('change', on);
+      });
+      $('[data-act=del]', card).addEventListener('click', function () {
+        cfg.funcs.splice(i, 1);
+        renderFuncs(); changed();
+      });
+      checkTerm(card, f.term);
+      box.appendChild(card);
+    });
+    $('#addF').disabled = cfg.funcs.length >= 8;
+    renderTableRows();
+  }
+
+  function checkTerm(card, term) {
+    var inp = $('[data-f=term]', card), err = $('.ferr', card);
+    var msg = '';
+    if (String(term || '').trim()) {
+      try { KOS.compile(term); } catch (e) { msg = e.message; }
+    }
+    inp.classList.toggle('bad', !!msg);
+    err.textContent = msg;
+    err.classList.toggle('hidden', !msg);
+  }
+
+  /* ---------- Wertetabelle: Zeilenauswahl ---------- */
+  function funcHead(i) {
+    var f = cfg.funcs[i];
+    var lab = String(f.label || '').trim();
+    if (lab && lab.indexOf('{z}') < 0) return /[=(]/.test(lab) ? lab : lab + '(x)';
+    return 'y' + sub(i + 1);
+  }
+  function renderTableRows() {
+    var box = $('#tblFuncs');
+    box.innerHTML = '';
+    var any = false;
+    cfg.funcs.forEach(function (f, i) {
+      if (!String(f.term || '').trim()) return;
+      any = true;
+      var use = cfg.table.use[i] !== false;
+      var l = document.createElement('label');
+      l.className = 'chk';
+      l.innerHTML = '<input type="checkbox"> <span></span>';
+      $('input', l).checked = use;
+      $('span', l).textContent = funcHead(i) + ' = ' + f.term;
+      $('input', l).addEventListener('change', function (ev) { cfg.table.use[i] = ev.target.checked; changed(true); });
+      box.appendChild(l);
+    });
+    if (!any) {
+      var p = document.createElement('p');
+      p.className = 'small';
+      p.style.margin = '2px 0';
+      p.textContent = 'Noch keine Funktion eingetragen – leere Zeilen gehen trotzdem.';
+      box.appendChild(p);
+    }
+    updateTablePreview();
+  }
+
+  function tableSpec() {
+    var specs = [];
+    cfg.funcs.forEach(function (f, i) {
+      if (String(f.term || '').trim() && cfg.table.use[i] !== false) specs.push({ index: i, head: funcHead(i) });
+    });
+    String(cfg.table.extra || '').split(/[;\n]/).map(function (s) { return s.trim(); }).filter(Boolean)
+      .forEach(function (h) { specs.push({ index: -1, head: h }); });
+    return {
+      from: cfg.table.from, to: cfg.table.to, step: cfg.table.step, decimals: cfg.table.decimals,
+      empty: !!cfg.table.empty, xName: String(cfg.table.xName || '').trim() || String(cfg.x.name || 'x').trim() || 'x', funcs: specs
+    };
+  }
+  function updateTablePreview() {
+    var el = $('#tblPreview');
+    if (!el) return;
+    var r = KOS.valueTable(cfg, tableSpec());
+    if (r.error) { el.textContent = r.error; return; }
+    var cols = r.rows[0].length;
+    var per = Math.max(2, (cfg.table.maxCols | 0) - 1);
+    var parts = Math.ceil((cols - 1) / per);
+    el.textContent = (cfg.table.vertical ? (cols - 1) + ' Zeilen, ' + r.rows.length + ' Spalten' : r.rows.length + ' Zeilen, ' + cols + ' Spalten') +
+      (!cfg.table.vertical && parts > 1 ? ' – wird auf ' + parts + ' Tabellen verteilt' : '') +
+      (r.errors.length ? ' · ' + r.errors.join(' · ') : '');
+  }
+
+  /* ---------- Vorschau ---------- */
+  var timer = null, saveTimer = null, last = null;
+  function changed(tableOnly) {
+    if (!tableOnly) { clearTimeout(timer); timer = setTimeout(draw, 120); }
+    updateTablePreview();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () { storeSet(STORE_LAST, cfg); }, 400);
+  }
+  function fmtCm(mm) { return (Math.round(mm) / 10).toFixed(1).replace('.', ','); }
+
+  function draw() {
+    var res;
+    try { res = KOS.render(cfg, { measure: measure }); }
+    catch (e) { res = { error: 'Interner Fehler: ' + e.message }; }
+    var msgs = $('#msgs');
+    msgs.innerHTML = '';
+    if (res.error) {
+      last = null;
+      var li = document.createElement('li'); li.className = 'err'; li.textContent = res.error; msgs.appendChild(li);
+      $('#size').textContent = '–';
+      $('#gridInfo').textContent = '';
+      setBusyButtons();
+      return;
+    }
+    last = res;
+    $('#pv').innerHTML = res.svg;
+    $('#size').textContent = fmtCm(res.w) + ' × ' + fmtCm(res.h) + ' cm';
+    $('#gridInfo').textContent = res.w > 170 ? 'breiter als 17 cm' : '';
+    res.warnings.forEach(function (w) { var li = document.createElement('li'); li.textContent = w; msgs.appendChild(li); });
+    var nf = cfg.funcs.filter(function (f) { return String(f.term || '').trim(); }).length;
+    $('#fBadge').textContent = nf ? nf + ' aktiv' : '';
+    var np = KOS.parsePoints(cfg.points.text).points.length;
+    $('#pBadge').textContent = np ? np + ' Punkte' : '';
+    setBusyButtons();
+  }
+
+  /* ---------- Rastern / Export ---------- */
+  function svgToBase64(svg) {
+    return window.btoa(unescape(encodeURIComponent(svg)));
+  }
+  function rasterize(svg, wMm, hMm, dpi) {
+    var maxPx = 16000000;
+    var W = Math.round(wMm / 25.4 * dpi), H = Math.round(hMm / 25.4 * dpi);
+    if (W * H > maxPx) { var f = Math.sqrt(maxPx / (W * H)); W = Math.floor(W * f); H = Math.floor(H * f); }
+    var s2 = svg.replace(/^<svg([^>]*?) width="[^"]*" height="[^"]*"/, '<svg$1 width="' + W + '" height="' + H + '"');
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var c = document.createElement('canvas'); c.width = W; c.height = H;
+          var g = c.getContext('2d');
+          g.fillStyle = '#ffffff'; g.fillRect(0, 0, W, H);
+          g.drawImage(img, 0, 0, W, H);
+          resolve(c.toDataURL('image/png').split(',')[1]);
+        } catch (e) { reject(e); }
+      };
+      img.onerror = function () { reject(new Error('Bild konnte nicht erzeugt werden.')); };
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s2);
+    });
+  }
+
+  function xmlAttr(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\r?\n/g, '&#10;');
+  }
+
+  /* Word-Paket: Bild als SVG (scharf) mit PNG als Ersatz für ältere Programme */
+  function buildOoxml(svgB64, pngB64, wMm, hMm, descr, withSvg) {
+    var cx = Math.round(wMm * 36000), cy = Math.round(hMm * 36000);
+    var id = 1000 + Math.floor(Math.random() * 900000);
+    var blipExt = withSvg
+      ? '<a:extLst><a:ext uri="{96DAC541-7B7A-43D3-8B79-37D633B846F1}"><asvg:svgBlip xmlns:asvg="http://schemas.microsoft.com/office/drawing/2016/SVG/main" r:embed="rIdKosSvg"/></a:ext></a:extLst>'
+      : '';
+    var rels = '<Relationship Id="rIdKosPng" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/kosmos' + id + '.png"/>' +
+      (withSvg ? '<Relationship Id="rIdKosSvg" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/kosmos' + id + '.svg"/>' : '');
+    return '<pkg:package xmlns:pkg="http://schemas.microsoft.com/office/2006/xmlPackage">' +
+      '<pkg:part pkg:name="/_rels/.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml"><pkg:xmlData>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>' +
+      '</pkg:xmlData></pkg:part>' +
+      '<pkg:part pkg:name="/word/_rels/document.xml.rels" pkg:contentType="application/vnd.openxmlformats-package.relationships+xml"><pkg:xmlData>' +
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' + rels + '</Relationships>' +
+      '</pkg:xmlData></pkg:part>' +
+      '<pkg:part pkg:name="/word/document.xml" pkg:contentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"><pkg:xmlData>' +
+      '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" ' +
+      'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" ' +
+      'xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><w:body><w:p><w:r><w:drawing>' +
+      '<wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="' + cx + '" cy="' + cy + '"/><wp:effectExtent l="0" t="0" r="0" b="0"/>' +
+      '<wp:docPr id="' + id + '" name="KOSmos ' + id + '" descr="' + xmlAttr(descr) + '"/>' +
+      '<wp:cNvGraphicFramePr><a:graphicFrameLocks noChangeAspect="1"/></wp:cNvGraphicFramePr>' +
+      '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic>' +
+      '<pic:nvPicPr><pic:cNvPr id="0" name="kosmos' + id + '.png"/><pic:cNvPicPr><a:picLocks noChangeAspect="1"/></pic:cNvPicPr></pic:nvPicPr>' +
+      '<pic:blipFill><a:blip r:embed="rIdKosPng">' + blipExt + '</a:blip><a:stretch><a:fillRect/></a:stretch></pic:blipFill>' +
+      '<pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="' + cx + '" cy="' + cy + '"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr>' +
+      '</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r></w:p></w:body></w:document>' +
+      '</pkg:xmlData></pkg:part>' +
+      '<pkg:part pkg:name="/word/media/kosmos' + id + '.png" pkg:contentType="image/png" pkg:compression="store"><pkg:binaryData>' + pngB64 + '</pkg:binaryData></pkg:part>' +
+      (withSvg ? '<pkg:part pkg:name="/word/media/kosmos' + id + '.svg" pkg:contentType="image/svg+xml" pkg:compression="store"><pkg:binaryData>' + svgB64 + '</pkg:binaryData></pkg:part>' : '') +
+      '</pkg:package>';
+  }
+
+  function descrFor(c) {
+    var copy = JSON.parse(JSON.stringify(c));
+    delete copy.table;
+    return MARK + JSON.stringify(copy);
+  }
+
+  /* ---------- Word ---------- */
+  function UserErr(msg) { this.message = msg; this.user = true; }
+
+  function currentRender() {
+    var res = KOS.render(cfg, { measure: measure, units: 'px' });
+    if (res.error) throw new UserErr(res.error);
+    return res;
+  }
+
+  function selectedKosPicture(ctx) {
+    var pics = ctx.document.getSelection().inlinePictures;
+    pics.load('items/altTextDescription');
+    return ctx.sync().then(function () {
+      var found = null;
+      pics.items.forEach(function (p) { if (!found && String(p.altTextDescription || '').indexOf(MARK) === 0) found = p; });
+      return { pic: found || pics.items[0] || null, isKos: !!found };
+    });
+  }
+
+  function insertKos(replace) {
+    var res, descr = descrFor(cfg);
+    try { res = currentRender(); } catch (e) { return Promise.reject(e); }
+    var svgB64 = svgToBase64(res.svg);
+    var pngFallback;
+    return rasterize(res.svg, res.w, res.h, 300).then(function (png) {
+      pngFallback = png;
+      var ooxml = buildOoxml(svgB64, png, res.w, res.h, descr, true);
+      return Word.run(function (ctx) {
+        var targetP = replace
+          ? selectedKosPicture(ctx).then(function (s) {
+              if (!s.pic) throw new UserErr('Bitte zuerst das KOS im Dokument anklicken, das ersetzt werden soll.');
+              return s.pic.getRange('Whole');
+            })
+          : Promise.resolve(ctx.document.getSelection());
+        return targetP.then(function (target) {
+          target.insertOoxml(ooxml, 'Replace');
+          return ctx.sync();
+        });
+      });
+    }).catch(function (e) {
+      if (e && e.user) throw e;
+      /* Ersatzweg: hochaufgelöstes PNG direkt einfügen */
+      return rasterize(res.svg, res.w, res.h, 600).then(function (png600) {
+        return Word.run(function (ctx) {
+          var tp = replace
+            ? selectedKosPicture(ctx).then(function (s) {
+                if (!s.pic) throw new UserErr('Bitte zuerst das KOS im Dokument anklicken, das ersetzt werden soll.');
+                return s.pic;
+              })
+            : Promise.resolve(ctx.document.getSelection());
+          return tp.then(function (t) {
+            var pic = t.insertInlinePictureFromBase64(png600 || pngFallback, 'Replace');
+            pic.width = res.w / 25.4 * 72;
+            pic.height = res.h / 25.4 * 72;
+            pic.altTextDescription = descr;
+            pic.altTextTitle = 'Koordinatensystem';
+            return ctx.sync();
+          });
+        });
+      }).then(function () { return 'png'; });
+    });
+  }
+
+  function loadFromSelection() {
+    return Word.run(function (ctx) {
+      return selectedKosPicture(ctx).then(function (s) {
+        if (!s.pic) throw new UserErr('Bitte zuerst ein KOS im Dokument anklicken.');
+        if (!s.isKos) throw new UserErr('Das markierte Bild wurde nicht mit KOSmos erstellt.');
+        var json = String(s.pic.altTextDescription).slice(MARK.length);
+        var obj = JSON.parse(json);
+        obj.table = cfg.table;
+        return obj;
+      });
+    });
+  }
+
+  function insertTable() {
+    var r = KOS.valueTable(cfg, tableSpec());
+    if (r.error) return Promise.reject(new UserErr(r.error));
+    var rows = r.rows;
+    var chunks = [];
+    if (cfg.table.vertical) {
+      var t = rows[0].map(function (_, c) { return rows.map(function (row) { return row[c]; }); });
+      chunks.push(t);
+    } else {
+      var per = Math.max(2, (cfg.table.maxCols | 0) - 1), n = rows[0].length - 1;
+      for (var s = 0; s < n; s += per) {
+        chunks.push(rows.map(function (row) { return [row[0]].concat(row.slice(1 + s, 1 + s + per)); }));
+      }
+    }
+    var fam = cfg.font.family || 'Arial', size = Math.max(6, Math.min(20, Number(cfg.font.size) || 11));
+    var vertical = !!cfg.table.vertical, empty = !!cfg.table.empty;
+    return Word.run(function (ctx) {
+      var anchor = ctx.document.getSelection().paragraphs.getLast();
+      var tables = [];
+      chunks.forEach(function (vals, ci) {
+        var tbl = anchor.insertTable(vals.length, vals[0].length, 'After', vals);
+        tbl.font.name = fam;
+        tbl.font.size = size;
+        tbl.horizontalAlignment = 'Centered';
+        tables.push(tbl);
+        anchor = tbl.insertParagraph('', 'After');
+      });
+      return ctx.sync().then(function () {
+        tables.forEach(function (tbl) { tbl.rows.load('items'); });
+        return ctx.sync();
+      }).then(function () {
+        tables.forEach(function (tbl) {
+          try {
+            var first = tbl.rows.items[0];
+            if (vertical) {
+              first.font.bold = true;
+              var b = first.getBorder('Bottom'); b.type = 'Single'; b.width = 1.5; b.color = '#000000';
+            } else {
+              tbl.rows.items.forEach(function (row, ri) {
+                var c0 = tbl.getCell(ri, 0);
+                c0.body.font.bold = true;
+                c0.horizontalAlignment = 'Left';
+                var br = c0.getBorder('Right'); br.type = 'Single'; br.width = 1.5; br.color = '#000000';
+                if (empty && ri > 0) row.preferredHeight = 22;
+              });
+              var bb = first.getBorder('Bottom'); bb.type = 'Single'; bb.width = 1.5; bb.color = '#000000';
+            }
+          } catch (e) { /* Formatierung ist nicht entscheidend */ }
+        });
+        return ctx.sync();
+      });
+    });
+  }
+
+  /* ---------- Browser-Modus: Dateien laden ---------- */
+  function download(name, href) {
+    var a = document.createElement('a');
+    a.href = href; a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { a.remove(); }, 100);
+  }
+
+  /* ---------- Rückmeldung ---------- */
+  var toastTimer = null;
+  function toast(msg, isErr) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.toggle('err', !!isErr);
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.classList.remove('show'); }, isErr ? 6000 : 2800);
+  }
+  var busy = false;
+  function setBusyButtons() {
+    ['#btnInsert', '#btnReplace', '#btnPng', '#btnSvg'].forEach(function (s) { var b = $(s); if (b) b.disabled = busy || !last; });
+    ['#btnLoad', '#btnTable'].forEach(function (s) { var b = $(s); if (b) b.disabled = busy; });
+  }
+  function run(btn, fn, okMsg) {
+    if (busy) return;
+    busy = true; setBusyButtons();
+    var label = btn.textContent;
+    btn.textContent = '…';
+    Promise.resolve().then(fn).then(function (r) {
+      var m = typeof okMsg === 'function' ? okMsg(r) : okMsg;
+      if (m) toast(m);
+    }).catch(function (e) {
+      var m = (e && e.user) ? e.message : 'Das hat nicht geklappt: ' + ((e && (e.message || e.code)) || e);
+      toast(m, true);
+      if (window.console) console.error(e);
+    }).then(function () {
+      busy = false; btn.textContent = label; setBusyButtons();
+    });
+  }
+
+  /* ---------- Vorlagen ---------- */
+  function fillTemplateSelect() {
+    var sel = $('#tpl');
+    var own = storeGet(STORE_TPL) || [];
+    var html = '<option value="">Vorlage …</option><optgroup label="Mitgeliefert">';
+    BUILTIN.forEach(function (t, i) { html += '<option value="b' + i + '">' + esc(t.name) + '</option>'; });
+    html += '</optgroup>';
+    if (own.length) {
+      html += '<optgroup label="Eigene">';
+      own.forEach(function (t, i) { html += '<option value="o' + i + '">' + esc(t.name) + '</option>'; });
+      html += '</optgroup>';
+    }
+    sel.innerHTML = html;
+    var list = $('#tplList');
+    list.innerHTML = '';
+    own.forEach(function (t, i) {
+      var row = document.createElement('div');
+      row.className = 'tplrow';
+      row.innerHTML = '<span></span><button class="btn" type="button">Laden</button><button class="icon-btn" type="button" aria-label="Vorlage löschen" title="Löschen">' + DEL_ICON + '</button>';
+      $('span', row).textContent = t.name;
+      $$('button', row)[0].addEventListener('click', function () { apply(t.cfg); toast('Vorlage „' + t.name + '“ geladen'); });
+      $$('button', row)[1].addEventListener('click', function () {
+        var o = storeGet(STORE_TPL) || []; o.splice(i, 1); storeSet(STORE_TPL, o); fillTemplateSelect();
+      });
+      list.appendChild(row);
+    });
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+  function apply(obj) {
+    var keepTable = cfg ? cfg.table : null;
+    cfg = fullNormalize(obj);
+    if (keepTable && !(obj && obj.table)) cfg.table = keepTable;
+    fillForm();
+    changed();
+  }
+
+  /* ---------- Start ---------- */
+  function wire() {
+    $$('[data-k]').forEach(function (el) {
+      var on = function () { readField(el); changed(el.getAttribute('data-k').indexOf('table.') === 0); };
+      el.addEventListener('input', on);
+      el.addEventListener('change', on);
+    });
+    $$('#gridSeg button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        cfg.grid.type = b.getAttribute('data-v');
+        $$('#gridSeg button').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+        changed();
+      });
+    });
+    $('#gridShade').addEventListener('change', function (ev) {
+      var v = ev.target.value;
+      $('#gridColorWrap').classList.toggle('hidden', v !== 'custom');
+      if (v !== 'custom') { cfg.grid.color = v; $('[data-k="grid.color"]').value = v; changed(); }
+    });
+    $('#addF').addEventListener('click', function () {
+      var styles = ['solid', 'dashed', 'dotted', 'dashdot'];
+      var f = JSON.parse(JSON.stringify(KOS.FUNC_DEFAULT));
+      f.style = styles[cfg.funcs.length % 4];
+      cfg.funcs.push(f);
+      renderFuncs();
+      var inputs = $$('#funcs [data-f=term]');
+      if (inputs.length) inputs[inputs.length - 1].focus();
+      changed();
+    });
+    $('#tpl').addEventListener('change', function (ev) {
+      var v = ev.target.value;
+      if (!v) return;
+      var t = v.charAt(0) === 'b' ? BUILTIN[+v.slice(1)] : (storeGet(STORE_TPL) || [])[+v.slice(1)];
+      if (t) { apply(t.cfg); toast('Vorlage „' + t.name + '“ geladen'); }
+      ev.target.value = '';
+    });
+    $('#tplSave').addEventListener('click', function () {
+      var name = $('#tplName').value.trim();
+      if (!name) { toast('Bitte einen Namen für die Vorlage eingeben.', true); return; }
+      var own = storeGet(STORE_TPL) || [];
+      var copy = JSON.parse(JSON.stringify(cfg));
+      var idx = own.findIndex(function (t) { return t.name === name; });
+      if (idx >= 0) own[idx].cfg = copy; else own.push({ name: name, cfg: copy });
+      storeSet(STORE_TPL, own);
+      $('#tplName').value = '';
+      fillTemplateSelect();
+      toast('Vorlage „' + name + '“ gespeichert');
+    });
+    $('#btnReset').addEventListener('click', function () { cfg = null; apply({}); toast('Auf Standard zurückgesetzt'); });
+
+    $('#btnInsert').addEventListener('click', function () {
+      run(this, function () { return insertKos(false); }, function (r) { return r === 'png' ? 'Eingefügt (als Bild, 600 dpi)' : 'Koordinatensystem eingefügt'; });
+    });
+    $('#btnReplace').addEventListener('click', function () {
+      run(this, function () { return insertKos(true); }, 'Koordinatensystem ersetzt');
+    });
+    $('#btnLoad').addEventListener('click', function () {
+      run(this, function () { return loadFromSelection().then(function (obj) { apply(obj); }); }, 'Einstellungen aus dem KOS geladen');
+    });
+    $('#btnTable').addEventListener('click', function () {
+      if (!inWord) {
+        var r = KOS.valueTable(cfg, tableSpec());
+        if (r.error) { toast(r.error, true); return; }
+        var tsv = r.rows.map(function (row) { return row.join('\t'); }).join('\n');
+        var done = function () { toast('Tabelle kopiert – in Word einfügen'); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(tsv).then(done, function () { download('wertetabelle.txt', 'data:text/plain;charset=utf-8,' + encodeURIComponent(tsv)); });
+        else download('wertetabelle.txt', 'data:text/plain;charset=utf-8,' + encodeURIComponent(tsv));
+        return;
+      }
+      run(this, insertTable, 'Wertetabelle eingefügt');
+    });
+    $('#btnPng').addEventListener('click', function () {
+      run(this, function () {
+        var res = KOS.render(cfg, { measure: measure });
+        if (res.error) throw new UserErr(res.error);
+        return rasterize(res.svg, res.w, res.h, 600).then(function (b64) { download('koordinatensystem.png', 'data:image/png;base64,' + b64); });
+      }, 'PNG erstellt');
+    });
+    $('#btnSvg').addEventListener('click', function () {
+      var res = KOS.render(cfg, { measure: measure });
+      if (res.error) { toast(res.error, true); return; }
+      download('koordinatensystem.svg', 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(res.svg));
+    });
+  }
+
+  function boot(host) {
+    inWord = host === 'word';
+    $('#actWord').classList.toggle('hidden', !inWord);
+    $('#actBrowser').classList.toggle('hidden', inWord);
+    $('#modeInfo').textContent = inWord ? '' : 'Vorschau im Browser';
+    if (!inWord) $('#btnTable').textContent = 'Wertetabelle kopieren';
+    var saved = storeGet(STORE_LAST);
+    cfg = fullNormalize(saved || BUILTIN[0].cfg);
+    fillTemplateSelect();
+    fillForm();
+    wire();
+    draw();
+    updateTablePreview();
+  }
+
+  window.__kosmos = { buildOoxml: buildOoxml, rasterize: rasterize, svgToBase64: svgToBase64, descrFor: descrFor,
+    render: function () { return KOS.render(cfg, { measure: measure, units: 'px' }); }, cfg: function () { return cfg; } };
+
+  var started = false;
+  function start(host) { if (started) return; started = true; boot(host); }
+  if (window.Office && Office.onReady) {
+    Office.onReady(function (info) {
+      var word = info && info.host === Office.HostType.Word;
+      if (word && !(Office.context.requirements && Office.context.requirements.isSetSupported('WordApi', '1.3'))) {
+        toast('Diese Word-Version ist zu alt für KOSmos (WordApi 1.3 nötig).', true);
+      }
+      start(word ? 'word' : 'browser');
+    });
+  } else {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { start('browser'); });
+    else start('browser');
+  }
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+KOSmos – Koordinatensysteme für Word (Mac, Microsoft 365)
+
+1. index.html öffnen: dort steht Schritt für Schritt, wie KOSmos online gestellt
+   und in Word eingebunden wird.
+2. preview.html öffnen: dieselbe Oberfläche direkt im Browser ausprobieren
+   (KOS als PNG/SVG speichern).
+
+Für die Webseite werden diese Dateien gebraucht:
+index.html, taskpane.html, commands.html, preview.html und der Ordner assets.
